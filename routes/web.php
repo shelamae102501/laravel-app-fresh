@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Models\Ideas;
 use App\Models\Post;
+use App\Models\User;
 
 Route::view('/', 'welcome', [
     'greeting' => 'Hello, World!',
@@ -82,3 +83,57 @@ Route::patch('/posts/{post}', function (Post $post) {
     return redirect('/posts' . '/' . $post->id);
 }
 );
+
+// User CRUD Routes
+Route::view('/user_registration', 'user_registration');
+
+Route::get('/users', function () {
+    $users = User::all();
+    return view('users.index', ['users' => $users]);
+});
+
+Route::post('/users', function () {
+    $validated = request()->validate([
+        'name' => 'required|string|max:255',
+        'first_name' => 'required|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'middle_name' => 'nullable|string|max:255',
+        'nickname' => 'nullable|string|max:255',
+        'email' => 'required|email|unique:users,email|max:255',
+        'age' => 'required|integer|min:0',
+        'address' => 'required|string',
+        'contact_number' => 'nullable|string|unique:users,contact_number|max:20',
+        // No password for simplicity (task doesn't specify)
+    ]);
+
+    User::create($validated);
+
+    return redirect('/users');
+});
+
+Route::get('/users/{user}/edit', function (User $user) {
+    return view('users.edit', ['user' => $user]);
+});
+
+Route::patch('/users/{user}', function (User $user) {
+    $validated = request()->validate([
+        'name' => 'required|string|max:255',
+        'first_name' => 'required|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'middle_name' => 'nullable|string|max:255',
+        'nickname' => 'nullable|string|max:255',
+        'email' => 'required|email|unique:users,email,' . $user->id,
+        'age' => 'required|integer|min:0',
+        'address' => 'required|string',
+        'contact_number' => 'nullable|string|unique:users,contact_number,' . ($user->contact_number ? $user->id : 'NULL'),
+    ]);
+
+    $user->update($validated);
+
+    return redirect('/users');
+});
+
+Route::delete('/users/{user}', function (User $user) {
+    $user->delete();
+    return redirect('/users');
+});
