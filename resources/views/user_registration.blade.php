@@ -1,4 +1,4 @@
-@extends('components.layout')
+@extends('layout.app')
 
 @section('title', 'User Registration')
 

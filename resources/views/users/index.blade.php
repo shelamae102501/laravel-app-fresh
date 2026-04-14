@@ -1,65 +1,53 @@
-@extends('components.layout')
-
+@extends('layout.app')
 @section('title', 'Users List')
-
 @section('content')
-<div class="max-w-7xl mx-auto mt-10 p-6">
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900">Users List</h1>
-        <a href="/user_registration" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 focus:ring-2 focus:ring-green-500 transition-all duration-200">
-            Add New User
-        </a>
+<div class="max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">👥 Users List</h1>
+        <a href="/user_registration" class="bg-green-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-green-700 transition">+ Add New User</a>
     </div>
 
-    @if($users->count() > 0)
-    <div class="bg-white shadow-xl rounded-lg overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-50">
+    <div class="bg-white shadow-md rounded-xl overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
                 <tr>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th class="px-6 py-4 text-left">Name</th>
+                    <th class="px-6 py-4 text-left">Email</th>
+                    <th class="px-6 py-4 text-left">Age</th>
+                    <th class="px-6 py-4 text-left">Contact</th>
+                    <th class="px-6 py-4 text-left">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
-                @foreach($users as $user)
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">
-                            {{ $user->first_name }} {{ $user->last_name }}
+            <tbody class="divide-y divide-gray-100">
+                @forelse($users as $user)
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4">
+                        <div class="font-medium text-gray-900">{{ $user->first_name }} {{ $user->last_name }}
                             @if($user->nickname)
-                                <span class="text-sm text-gray-500">({{ $user->nickname }})</span>
+                                <span class="text-gray-400 text-xs">({{ $user->nickname }})</span>
                             @endif
                         </div>
-                        <div class="text-sm text-gray-500">{{ $user->name }}</div>
+                        <div class="text-gray-500 text-xs">{{ $user->name }}</div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->email }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->age }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ $user->contact_number ?? 'N/A' }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <a href="/users/{{ $user->id }}/edit" class="text-blue-600 hover:text-blue-900">Edit</a>
+                    <td class="px-6 py-4 text-gray-700">{{ $user->email }}</td>
+                    <td class="px-6 py-4 text-gray-700">{{ $user->age }}</td>
+                    <td class="px-6 py-4 text-gray-700">{{ $user->contact_number ?? 'N/A' }}</td>
+                    <td class="px-6 py-4 flex gap-2">
+                        <a href="/users/{{ $user->id }}/edit" class="bg-yellow-50 text-yellow-600 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-yellow-100 transition">Edit</a>
                         <form method="POST" action="/users/{{ $user->id }}" class="inline" onsubmit="return confirm('Are you sure?')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                            <button class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-red-100 transition">Delete</button>
                         </form>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="5" class="px-6 py-12 text-center text-gray-400">No users found.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
-    @else
-    <div class="text-center py-20">
-        <p class="text-xl text-gray-500 mb-4">No users found.</p>
-        <a href="/user_registration" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700">
-            Create First User
-        </a>
-    </div>
-    @endif
 </div>
 @endsection

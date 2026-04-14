@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Models\Ideas;
@@ -85,8 +86,10 @@ Route::patch('/posts/{post}', function (Post $post) {
 );
 
 // User CRUD Routes
-Route::view('/user_registration', 'user_registration');
+Route::get('/user_registration', function () {
+    return view('user_registration');
 
+});
 Route::get('/users', function () {
     $users = User::all();
     return view('users.index', ['users' => $users]);
@@ -137,3 +140,5 @@ Route::delete('/users/{user}', function (User $user) {
     $user->delete();
     return redirect('/users');
 });
+
+Route::resource('books', BookController::class);
